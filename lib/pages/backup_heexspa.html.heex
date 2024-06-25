@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="description" content="Webpage description goes here" />
+  <meta charset="utf-8">
+  <title>title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script>
+        const wsUrl = "ws://localhost:4000/ws/";
+        const socket = new WebSocket(wsUrl);
+        socket.onopen = function(event) {
+            socket.send(JSON.stringify({method: "get", key: "val"}));
+            Array.from(document.getElementsByClassName("tmnn-val-+")).forEach(elem =>{
+                elem.addEventListener("click", () => {
+                    socket.send(JSON.stringify({
+                        "method": "nudge",
+                        "key": "val",
+                        "direction": "up"
+                    }))
+                })
+            })
+        };
+
+        socket.onmessage = function(event) {
+            const field = JSON.parse(event.data);
+            <%= listeners %>
+        };
+
+        socket.onclose = function(event) {
+            console.log("WebSocket is closed now.");
+        };
+
+        socket.onerror = function(error) {
+            console.log("WebSocket error:", error);
+        };
+    </script>
+    <div class="container">
+        <p class="tmnn-val-innerText">0</p>
+        <button class="tmnn-val-+">+</button>
+        <button>-</button>
+    </div>
+</body>
+</html>
